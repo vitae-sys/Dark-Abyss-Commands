@@ -4,14 +4,13 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/rebuild-hero.yml'
 
 permissions:
   contents: write
 
 jobs:
   rebuild:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,7 +25,6 @@ jobs:
             tr -d '\r\n\t ' < "assets/hero-chunks/${i}.txt" > "/tmp/abyss-hero/${i}.b64"
           done
 
-          # Strategy A: the files are slices of one base64 string.
           cat /tmp/abyss-hero/0.b64 /tmp/abyss-hero/1.b64 /tmp/abyss-hero/2.b64 /tmp/abyss-hero/3.b64 > /tmp/abyss-hero/full.b64
           if base64 --decode /tmp/abyss-hero/full.b64 > assets/dark-abyss-hero-final.jpg 2>/tmp/abyss-hero/joined.err \
              && file assets/dark-abyss-hero-final.jpg | grep -qi 'JPEG image data'; then
@@ -55,7 +53,7 @@ jobs:
 
           html = html.replace(
               '<img id="heroArt" alt="" decoding="async">',
-              '<img id="heroArt" src="/assets/dark-abyss-hero-final.jpg?v=20" alt="" decoding="async" fetchpriority="high">'
+              '<img id="heroArt" src="/assets/dark-abyss-hero-final.jpg?v=21" alt="" decoding="async" fetchpriority="high">'
           )
 
           html = re.sub(
