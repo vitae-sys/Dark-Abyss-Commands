@@ -1,0 +1,83 @@
+name: Rebuild homepage hero
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/rebuild-hero.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rebuild JPEG from stored base64 chunks
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/abyss-hero assets
+          for i in 0 1 2 3; do
+            tr -d '\r\n\t ' < "assets/hero-chunks/${i}.txt" > "/tmp/abyss-hero/${i}.b64"
+          done
+
+          # Strategy A: the files are slices of one base64 string.
+          cat /tmp/abyss-hero/0.b64 /tmp/abyss-hero/1.b64 /tmp/abyss-hero/2.b64 /tmp/abyss-hero/3.b64 > /tmp/abyss-hero/full.b64
+          if base64 --decode /tmp/abyss-hero/full.b64 > assets/dark-abyss-hero-final.jpg 2>/tmp/abyss-hero/joined.err \
+             && file assets/dark-abyss-hero-final.jpg | grep -qi 'JPEG image data'; then
+            echo 'Decoded joined base64 stream.'
+          else
+            echo 'Joined stream was not a valid JPEG; trying per-chunk decoding.'
+            rm -f assets/dark-abyss-hero-final.jpg
+            for i in 0 1 2 3; do
+              base64 --decode "/tmp/abyss-hero/${i}.b64" > "/tmp/abyss-hero/${i}.bin"
+            done
+            cat /tmp/abyss-hero/0.bin /tmp/abyss-hero/1.bin /tmp/abyss-hero/2.bin /tmp/abyss-hero/3.bin > assets/dark-abyss-hero-final.jpg
+          fi
+
+          file assets/dark-abyss-hero-final.jpg
+          test "$(xxd -p -l 3 assets/dark-abyss-hero-final.jpg)" = "ffd8ff"
+          file assets/dark-abyss-hero-final.jpg | grep -qi 'JPEG image data'
+
+      - name: Point homepage at real JPEG
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+
+          html = html.replace(
+              '<img id="heroArt" alt="" decoding="async">',
+              '<img id="heroArt" src="/assets/dark-abyss-hero-final.jpg?v=20" alt="" decoding="async" fetchpriority="high">'
+          )
+
+          html = re.sub(
+              r'<script>\(async\(\)=>\{try\{const parts=await Promise\.all\(\[0,1,2,3\].*?</script>',
+              '',
+              html,
+              count=1,
+              flags=re.S,
+          )
+
+          path.write_text(html, encoding='utf-8')
+
+      - name: Commit generated binary asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html assets/dark-abyss-hero-final.jpg
+          if git diff --cached --quiet; then
+            echo 'Nothing to commit.'
+            exit 0
+          fi
+          git commit -m "Fix homepage hero binary asset"
+          git push
