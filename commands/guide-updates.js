@@ -40,13 +40,4 @@
     const enchantIndex = systems.findIndex((system) => system[0] === 'Abyss Enchants');
     systems.splice(enchantIndex >= 0 ? enchantIndex + 1 : systems.length, 0, honing);
   }
-
-  if (!find('Server Plugin Stack')) {
-    systems.push([
-      'Server Plugin Stack', '⚙', 'rpg social land economy cosmetic',
-      'The main player-facing systems currently powering Dark Abyss.',
-      '', [],
-      'Custom: AbyssAurora, AbyssBosses, AbyssHoning, AbyssLoot, AbyssRTP. Progression & economy: EcoSkills, EcoJobs, EcoShop, EcoEnchants, GlobalMarketplace. Land & social: HuskClaims, HuskTowns, PlayerWarps. World & content: BetterStructures, JustLootIt, NewSeasons, EcoMobs, EliteMobs. Player features: Citizens, UltraCosmetics, ImageFrame, FancyHolograms. Crossplay: Geyser + Floodgate. Backend/admin-only plugins are intentionally not listed here.'
-    ]);
-  }
 })();
