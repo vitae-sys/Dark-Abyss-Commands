@@ -29,13 +29,13 @@
   if (!find('Abyss Honing')) {
     const honing = [
       'Abyss Honing', '✦', 'rpg',
-      'Upgrade supported armor through nine named Honing tiers.',
+      'Upgrade armor, weapons and tools through nine named Honing tiers.',
       'member',
       [
         ['/honing', 'Show the Honing system help.'],
         ['/honing core', 'Show the Abyssal Honing Core crafting recipe.']
       ],
-      'HOW TO HONE: Put supported armor in the left side of a normal anvil and a genuine Abyssal Honing Core in the right side. Tier path: Dormant I → Hardened II → Tempered III → Runed IV → Awakened V → Ascendant VI → Abyssforged VII → Sovereign VIII → Transcendent IX. Upgrade costs/chances: 1 Core + $1,000 (100%), 1 + $2,500 (100%), 2 + $5,000 (90%), 2 + $8,000 (80%), 3 + $12,000 (65%), 4 + $18,000 (50%), 5 + $28,000 (35%), 6 + $45,000 (20%). Failed attempts consume the required Cores and money, but never break or downgrade the item. Each failure adds +5 percentage points of pity, up to +25. Diamond → Netherite keeps the Honing tier and pity. Core recipe: D A D / I E I / D A D (D = Diamond, A = Amethyst Shard, I = Iron Block, E = Echo Shard).'
+      'HOW TO HONE: Put supported gear in the left side of a normal anvil and a genuine Abyssal Honing Core in the right side. Supported gear includes armor, swords, axes, pickaxes, shovels, hoes, mace, bow, crossbow and trident. Tier path: Dormant I → Hardened II → Tempered III → Runed IV → Awakened V → Ascendant VI → Abyssforged VII → Sovereign VIII → Transcendent IX. Armor improves its defensive stats. Weapons gain increasing melee/projectile power, reaching +40% at Transcendent IX. Honed tools also gain extra mining efficiency. Upgrade costs/chances: 1 Core + $1,000 (100%), 1 + $2,500 (100%), 2 + $5,000 (90%), 2 + $8,000 (80%), 3 + $12,000 (65%), 4 + $18,000 (50%), 5 + $28,000 (35%), 6 + $45,000 (20%). Failed attempts consume the required Cores and money, but never break or downgrade the item. Each failure adds +5 percentage points of pity, up to +25. Diamond → Netherite keeps the Honing tier and pity. Core recipe: D A D / I E I / D A D (D = Diamond, A = Amethyst Shard, I = Iron Block, E = Echo Shard).'
     ];
     const enchantIndex = systems.findIndex((system) => system[0] === 'Abyss Enchants');
     systems.splice(enchantIndex >= 0 ? enchantIndex + 1 : systems.length, 0, honing);
